@@ -1,5 +1,24 @@
 import ac
 
+def log(message) -> None:
+    """
+    Print a message to the log file.
+    """
+    if isinstance(message, str):
+        ac.log(message)
+    else:
+        ac.log(str(message))
+
+def console(message) -> None:
+    """
+    Print a message to the console.
+    """
+    if isinstance(message, str):
+        ac.console(message)
+    else:
+        ac.console(str(message))
+
+
 
 def get_server_name() -> str:
     """
