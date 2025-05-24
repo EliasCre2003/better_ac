@@ -35,21 +35,3 @@ class Color:
         return self.red / 255, self.green / 255, self.blue / 255, self.alpha
 
 
-class FontAlignment:
-    """
-    An enum-like class that stores all the font alignment modes.
-    """
-
-    def __init__(self, name: str):
-        self.name = name
-    
-    # def _type(name: str):
-    #     return FontAlignment(name)
-    
-    # LEFT = _type("left")
-    # RIGHT = _type("right")
-    # CENTER = _type("center")
-
-FontAlignment.LEFT = FontAlignment("left")
-FontAlignment.RIGHT = FontAlignment("right")
-FontAlignment.CENTER = FontAlignment("center")
