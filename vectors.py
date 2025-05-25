@@ -1,3 +1,18 @@
+class Vector2D:
+    def __init__(self, x: float = 0, y: float = 0, structure = None):
+        if structure is None:
+            self.x = x
+            self.y = y
+        else:
+            self.x = structure[0]
+            self.y = structure[1]
+
+    def __str__(self):
+        return "({:.2f}, {:.2f})".format(self.x, self.y)
+    
+    def __repr__(self):
+        return str(self)
+
 class Vector3D:
     def __init__(self, x: float = 0, y: float = 0, z: float = 0, structure = None):
         if structure is None:

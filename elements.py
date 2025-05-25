@@ -1,7 +1,7 @@
 import ac
 import acsys
 
-from .misc import Color
+from .graphics import Color
 from .memory import *
 from .font import FontAlignment, Font
 from . import *
@@ -49,19 +49,6 @@ class _GenericElement:
         self.set_font(font)
         log(11)
 
-    # def apply_to_all(method):
-    #     def wrapper(self: _GenericElement, *args, **kwargs):
-    #         for instance in self.instances:
-    #             self._current_obj_id = instance
-    #             method(self, *args, **kwargs)
-    #         del self._current_obj_id
-    #     return wrapper
-
-    # def get_id(self) -> int:
-    #     """
-    #     Get the ID of the element.
-    #     """
-    #     return self.object_id
     
     def set_size(self, width: float, height: float) -> None:
         """
@@ -159,6 +146,7 @@ class _GenericElement:
     def add_render_callback(self, callback) -> None:
         """
         Add a callback to the element when it is rendered.
+        The first argument of the callback must be the delta time.
         """
         if not callable(callback):
             raise ValueError("Callback must be a callable function.")
