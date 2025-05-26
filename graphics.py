@@ -159,21 +159,23 @@ class Triangle(Drawable):
 
 class Shape(Drawable):
     """A base class for shapes that can be drawn."""
-    def __init__(self, triangles):
+    def __init__(self, vertices, triangles):
+        self.vertices = vertices
         self.triangles = triangles
 
+    # DOESN'T REALLY WORK YET
     @staticmethod
-    def polygon(vertices) -> 'Shape':
+    def polygon(points, color: Color) -> 'Shape':
         """
         Create a shape from a list of vertices by converting them into triangles.
         
-        :param vertices: A list of Vertex objects representing the vertices of the polygon.
+        :param points: A list of Vector2D objects representing the corners of the polygon.
         :return: A Shape object containing the triangles that make up the polygon.
         """
-        if len(vertices) < 3:
+        if len(points) < 3:
             raise ValueError("A polygon must have at least 3 vertices.")
         triangles = []
-        indices = list(range(len(vertices)))
+        indices = list(range(len(points)))
         i = 0
         while len(indices) > 3:
             if i == len(indices):
@@ -181,8 +183,12 @@ class Shape(Drawable):
             i1 = indices[i-1]
             i2 = indices[i]
             i3 = indices[(i + 1) % len(indices)]
-            v1, v2, v3 = vertices[i1], vertices[i2], vertices[i3]
-            triangle = Triangle(v1, v2, v3)
+            p1, p2, p3 = points[i1], points[i2], points[i3]
+            triangle = Triangle(
+                Vector2D(p1.x, p1.y, color), 
+                Vector2D(p2.x, p2.y, color),
+                Vector2D(p3.x, p3.y, color)
+            )
             if not triangle.is_convex():
                 i += 1
                 continue
@@ -190,7 +196,7 @@ class Shape(Drawable):
             for j in indices:
                 if j in (i1, i2, i3):
                     continue
-                if triangle.is_inside(vertices[j].vector()):
+                if triangle.is_inside(points[j].vector()):
                     ear_found = False
                     break
             if ear_found:
@@ -200,27 +206,76 @@ class Shape(Drawable):
             else:
                 i += 1
         if len(indices) == 3:
-            v1, v2, v3 = [vertices[i] for i in indices]
-            triangles.append(Triangle(v1, v2, v3))
-        return Shape(triangles)
+            p1, p2, p3 = [points[i] for i in indices]
+            triangles.append(
+                triangle = Triangle(
+                    Vector2D(p1.x, p1.y, color), 
+                    Vector2D(p2.x, p2.y, color),
+                    Vector2D(p3.x, p3.y, color)
+                )
+            )
+        return Shape(points, triangles)
 
-    def draw(self):
+    def draw(self, fill: bool = True):
         """
         Draw the shape by rendering all triangles.
         """
-        for triangle in self.triangles:
-            triangle.draw()
+        if fill:
+            for triangle in self.triangles:
+                triangle.draw()
+            return
+        ac.glBegin(GL_LINES_STRIP)
+        for vertex in self.vertices:
+            ac.glColor4f(*vertex.color.ac_rgba())
+            ac.glVertex2f(vertex.x, vertex.y)
+        ac.glEnd()
 
 
-def draw_textured_quad(x: float, y: float, width: float, height: float, texture: Texture):
+class Quad(Drawable):
     """
-    Draws a textured quad at the specified position and size.
-    
-    :param x: The x-coordinate of the quad's top-left corner.
-    :param y: The y-coordinate of the quad's top-left corner.
-    :param width: The width of the quad.
-    :param height: The height of the quad.
-    :param texture: The Texture object to use for the quad.
+    A class to represent a quad that can be drawn.
     """
-    ac.glQuadTextured(x, y, width, height, texture.texture_id)
+    def __init__(self, x: float, y: float, width: float, height: float, color: Color):
+        """
+        Initialize a quad with position, size, and color.
+        
+        :param x: The x-coordinate of the quad's top-left corner.
+        :param y: The y-coordinate of the quad's top-left corner.
+        :param width: The width of the quad.
+        :param height: The height of the quad.
+        :param color: A Color object representing the color of the quad.
+        """
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.color = color
+
+    def draw(self):
+        ac.glColor4f(*self.color.ac_rgba())
+        ac.glQuad(self.x, self.y, self.width, self.height)
+
+
+class TexturedQuad(Drawable):
+    """
+    A class to represent a quad with a texture that can be drawn.
+    """
+    def __init__(self, x: float, y: float, width: float, height: float, texture: Texture):
+        """
+        Initialize a textured quad with position, size, and texture.
+        
+        :param x: The x-coordinate of the quad's top-left corner.
+        :param y: The y-coordinate of the quad's top-left corner.
+        :param width: The width of the quad.
+        :param height: The height of the quad.
+        :param texture: A Texture object representing the texture to apply to the quad.
+        """
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.texture = texture
+
+    def draw(self):
+        ac.glQuadTextured(self.x, self.y, self.width, self.height, self.texture.texture_id)
 

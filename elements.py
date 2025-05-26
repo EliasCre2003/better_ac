@@ -24,30 +24,19 @@ class _GenericElement:
         self.object_id = object_id
         self.text = text
         self.set_size(*size)
-        log(1)
         self.set_position(*position)
-        log(2)
         self.set_background_opacity(background_opacity)
-        log(3)
         self.set_background_visible(background_visible)
-        log(4)
         self.set_border_visible(border_visible)
-        log(5)
         if background_texture is None:
             background_texture = None
         else:
             self.set_background_texture(background_texture)
-        log(6)
         self.set_font_alignment(font_alignment)
-        log(7)
         self.set_font_color(font_color)
-        log(8)
         self.set_visible(visible)
-        log(9)
         self.set_font_size(font_size)
-        log(10)
         self.set_font(font)
-        log(11)
 
     
     def set_size(self, width: float, height: float) -> None:
