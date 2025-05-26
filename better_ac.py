@@ -1,5 +1,8 @@
 import ac
 
+from .sim_info import info
+
+
 _logging_enabled = True
 _console_enabled = True
 
@@ -89,3 +92,8 @@ def set_ffb_gain(value: float) -> None:
     ac.setFFBGain(value)
 
 
+def get_track_name() -> str:
+    """
+    Get the name of the track.
+    """
+    return info.static.track

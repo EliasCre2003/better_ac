@@ -73,7 +73,7 @@ class _GenericElement:
 
     @text.setter    
     def text(self, text: str):
-        ac.setText(self._object_id, text)
+        log(ac.setText(self._object_id, text))
 
     @property
     def background_opacity(self) -> float:
@@ -220,8 +220,122 @@ class _GenericElement:
             ac.setCustomFont(0, self._object_id, font.name, 1 if font.italic else 0, 1 if font.bold else 0)
 
 
+class AppWindow(_GenericElement):
+    def __init__(self,
+        title: str = "App",
+        size = (100, 100),
+        position = (0, 0),
+        background_opacity: float = 0.5,
+        background_visible: bool = True,
+        border_visible: bool = True,
+        background_texture: str = None,
+        font_alignment: FontAlignment = FontAlignment.CENTER,
+        font_color: Color = Color(255, 255, 255, 1),
+        visible: bool = True,
+        font_size: int = 12,
+        title_position = (0, 0),
+        font = Font()
+    ):
+        object_id = ac.newApp(title)
+        log(object_id)
+        super().__init__(
+            object_id,
+            "",
+            size,
+            position,
+            background_opacity,
+            background_visible,
+            border_visible,
+            background_texture,
+            font_alignment,
+            font_color,
+            visible,
+            font_size,
+            font
+        )
+        self.title = title
+        self.title_position = title_position
+
+
+    @property
+    def title(self) -> str:
+        """
+        The title of the app.
+        """
+        return self._title
+    
+    @title.setter
+    def title(self, title: str) -> None:
+        self._title = title
+        ac.setTitle(self._object_id, title)
+
+    @property
+    def title_position(self) -> 'tuple[float, float]':
+        """
+        The position of the title.
+        """
+        self._title_position
+    
+    @title_position.setter
+    def title_position(self, position) -> None:
+        self._title_position = position
+        ac.setTitlePosition(self._object_id, *position)
+
+    def add_label(self, label: str):
+        """
+        Add a label to the app.
+        """
+        ac.addLabel(self._object_id, label)
+    
+    @property
+    def icon_position(self) -> 'tuple[float, float]':
+        """
+        The position of the icon.
+        """
+        return self._icon_position
+    
+    @icon_position.setter
+    def icon_position(self, position: 'tuple[float, float]') -> None:
+        self._icon_position = position
+        ac.setIconPosition(self._object_id, *position)
+
+    @property
+    def on_dismissed(self):
+        """
+        The function that is called when the app is dismissed.
+        """
+        return self._on_dismissed
+    
+    @on_dismissed.setter
+    def on_dismissed(self, func) -> None:
+        if func is None:
+            self._on_dismissed = None
+            return
+        if not callable(func):
+            raise ValueError("Dismissed function must be a callable function.")
+        self._on_dismissed = func
+        ac.addOnAppDismissedListener(self._object_id, func)
+
+    @property
+    def on_activated(self):
+        """
+        The function that is called when the app is activated.
+        """
+        return self._on_activated
+
+    @on_activated.setter
+    def on_activated(self, func) -> None:
+        if func is None:
+            self._on_activated = None
+            return
+        if not callable(func):
+            raise ValueError("Activated function must be a callable function.")
+        self._on_activated = func
+        ac.addOnAppActivatedListener(self._object_id, func)
+
+
 class Button(_GenericElement):
-    def __init__(self, app: 'AppWindow',
+    def __init__(self, app: AppWindow,
         text: str = "Title",
         size = (50, 50),
         position = (0, 0),
@@ -292,9 +406,8 @@ class Button(_GenericElement):
     
 class Graph(_GenericElement):
 
-    def __init__(self, app: 'AppWindow',
-        minimum_value: float = 0.0,
-        maximum_value: float = 1.0,
+    def __init__(self, app: AppWindow,
+        range: 'tuple[float, float]' = (0.0, 1.0),
         maximum_points: int = 100,
         text: str = "Graph",
         size = (0, 0),
@@ -325,30 +438,22 @@ class Graph(_GenericElement):
             font_size,
             font
         )
-        self._minimum_value = minimum_value
-        self._maximum_value = maximum_value
+        self._range = range
         self._maximum_points = maximum_points
-        ac.setRange(self._object_id, minimum_value, maximum_value, maximum_points)
+        ac.setRange(self._object_id, range[0], range[1], maximum_points)
         self._next_serie_index = 0
 
     @property
-    def minimum_value(self) -> float:
+    def range(self) -> 'tuple[float, float]':
         """
-        The minimum value of the graph. (read-only)
+        The value range of the graph.
         """
-        return self._minimum_value
-    
-    @property
-    def maximum_value(self) -> float:
-        """
-        The maximum value of the graph. (read-only)
-        """
-        return self._maximum_value
+        return self._range
     
     @property
     def maximum_points(self) -> int:
         """
-        The maximum number of points in the graph. (read-only)
+        The maximum number of data points in the graph. (read-only)
         """
         return self._maximum_points
 
@@ -411,7 +516,7 @@ class Serie:
 
 
 class Checkbox(_GenericElement):
-    def __init__(self, app: 'AppWindow',
+    def __init__(self, app: AppWindow,
         name: str = "Checkbox",
         size = (25, 25),
         position = (50, 50),
@@ -462,13 +567,16 @@ class Checkbox(_GenericElement):
         self._on_change = func
         ac.addOnCheckBoxChanged(self._object_id, func)
 
-
-class AppWindow(_GenericElement):
-    def __init__(self,
-        title: str = "App",
-        size = (100, 100),
-        position = (0, 0),
-        background_opacity: float = 0.5,
+# _range = range
+class Spinner(_GenericElement):
+    def __init__(self, app: AppWindow,
+        name: str = "Spinner",
+        value: float = 0.0,
+        range: 'tuple[float, float]' = (0.0, 1.0),
+        step: float = 0.1,
+        size = (100, 25),
+        position = (50, 50),
+        background_opacity: float = 1.0,
         background_visible: bool = True,
         border_visible: bool = True,
         background_texture: str = None,
@@ -476,73 +584,90 @@ class AppWindow(_GenericElement):
         font_color: Color = Color(255, 255, 255, 1),
         visible: bool = True,
         font_size: int = 12,
-        font = Font()
+        font = Font(),
+        on_change = None
     ):
-        object_id = ac.newApp(title)
-        log(object_id)
-        super().__init__(
-            object_id,
-            "",
-            size,
-            position,
-            background_opacity,
-            background_visible,
-            border_visible,
-            background_texture,
-            font_alignment,
-            font_color,
-            visible,
-            font_size,
-            font
+        object_id = ac.addSpinner(app._object_id, name)
+        super().__init__(object_id,
+            text = "",
+            size = size,
+            position = position,
+            background_opacity = background_opacity,
+            background_visible = background_visible,
+            border_visible = border_visible,
+            background_texture = background_texture,
+            font_alignment = font_alignment,
+            font_color = font_color,
+            visible = visible,
+            font_size = font_size,
+            font = font
         )
-        self.title = title
+        self.range = range
+        self.value = value
+        self.on_change = on_change
+        self.step = step
 
 
     @property
-    def title(self) -> str:
+    def value(self) -> float:
         """
-        The title of the app.
+        The current value of the spinner.
+        The value must be within the range of the spinner.
         """
-        return self._title
+        result = ac.getValue(self._object_id)
+        log(result)
+        return result
     
-    @title.setter
-    def title(self, title: str) -> None:
-        self._title = title
-        ac.setTitle(self._object_id, title)
+    @value.setter
+    def value(self, value: float) -> None:
+        if not isinstance(value, float):
+            raise ValueError("Value must be a float.")
+        if value < self.range[0] or value > self.range[1]:
+            raise ValueError("Value must be within the range {}.".format(self.range))
+        ac.setValue(self._object_id, value)
 
     @property
-    def title_position(self):
+    def range(self) -> 'tuple[float, float]':
         """
-        The position of the title. (tuple[float, float])
+        The range of the spinner.
         """
-        self._title_position
-    
-    @title_position.setter
-    def title_position(self, position) -> None:
-        self._title_position = position
-        ac.setTitlePosition(self._object_id, *position)
+        return self._range
 
-    def add_label(self, label: str):
-        """
-        Add a label to the app.
-        """
-        ac.addLabel(self._object_id, label)
-    
-    def set_icon_position(self, x: float, y: float) -> None:
-        """
-        Set the position of the icon.
-        """
-        ac.setIconPosition(self._object_id, x, y)
+    @range.setter
+    def range(self, range: 'tuple[float, float]') -> None:
+        self._range = range
+        ac.setRange(self._object_id, range[0], range[1])
+        # ac.setStep(self._object_id, range.step)
 
-    def add_on_activated_callback(self, callback) -> None:
+    @property
+    def step(self) -> float:
         """
-        Add a callback to the app when it is activated.
+        The step of the spinner.
         """
-        ac.addOnAppActivatedListener(self._object_id, callback)
-
-    def add_on_dismissed_callback(self, callback) -> None:
-        """
-        Add a callback to the app when it is dismissed.
-        """
-        ac.addOnAppDismissedListener(self._object_id, callback)
+        return self._step
     
+    @step.setter
+    def step(self, step: float) -> None:
+        if step <= 0:
+            raise ValueError("Step must be greater than 0.")
+        self._step = step
+        ac.setStep(self._object_id, step)
+
+    @property
+    def on_change(self):
+        """
+        The function that is called when the spinner value is changed.
+        The first argument of the function must be the name of the spinner, 
+        and the second one is the new value.
+        """
+        return self._on_change
+    
+    @on_change.setter
+    def on_change(self, func):
+        if func is None:
+            self._on_change = None
+            return
+        if not callable(func):
+            raise ValueError("Change function must be a callable function.")
+        self._on_change = func
+        ac.addOnSpinnerChanged(self._object_id, func)

@@ -7,8 +7,8 @@ if platform.architecture()[0] == "64bit":
 else:
     sysdir = "stdlib"
 
-sys.path.insert(0, os.path.join('better_ac', os.path.dirname(__file__), sysdir))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), sysdir))
 os.environ['PATH'] = os.environ['PATH'] + ";."
 
 from .better_ac import *
-from .car import Car
+from .car import Car, PlayerCar
