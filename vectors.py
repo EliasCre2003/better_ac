@@ -1,3 +1,4 @@
+
 class Vector2D:
     def __init__(self, x: float = 0, y: float = 0, structure = None):
         if structure is None:
@@ -14,7 +15,7 @@ class Vector2D:
         return str(self)
 
 class Vector3D:
-    def __init__(self, x: float = 0, y: float = 0, z: float = 0, structure = None):
+    def __init__(self, x: float = 0, y: float = 0, z: float = 0, structure: 'tuple[float, float, float]' = None):
         if structure is None:
             self.x = x
             self.y = y

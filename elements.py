@@ -8,7 +8,7 @@ from . import *
 
 class _GenericElement:
     def __init__(self, object_id,
-        text,
+        text: str,
         size,
         position,
         background_opacity: float,
@@ -29,7 +29,6 @@ class _GenericElement:
         self.background_opacity = background_opacity
         self.background_visible = background_visible
         self.border_visible = border_visible
-        # self.set_background_opacity(background_opacity)
         if background_texture is None:
             background_texture = None
         else:
@@ -43,19 +42,19 @@ class _GenericElement:
 
     
     @property
-    def size(self):
+    def size(self) -> 'tuple[float, float]':
         """
         The size of the element. (tuple[float, float])
         """
         return self._size
 
     @size.setter
-    def size(self, size) -> None:
+    def size(self, size: 'tuple[float, float]') -> None:
         self._size = size
         ac.setSize(self._object_id, *size)
 
     @property
-    def position(self):
+    def position(self) -> 'tuple[float, float]':
         """
         The position of the element. (tuple[float, float])
         """
@@ -66,14 +65,14 @@ class _GenericElement:
         ac.setPosition(self._object_id, *position)
 
     @property
-    def text(self):
+    def text(self) -> str:
         """
         The text of the element.
         """
         return ac.getText(self._object_id)
 
     @text.setter    
-    def text(self, text: str) -> None:
+    def text(self, text: str):
         ac.setText(self._object_id, text)
 
     @property
@@ -84,7 +83,7 @@ class _GenericElement:
         return self._background_opacity
 
     @background_opacity.setter
-    def background_opacity(self, opacity: float) -> None:
+    def background_opacity(self, opacity: float):
         if not (0 <= opacity <= 1):
             raise ValueError("Opacity must be between 0 and 1.")
         self._background_opacity = opacity
@@ -110,7 +109,7 @@ class _GenericElement:
         return self._border_visible
     
     @border_visible.setter
-    def border_visible(self, arg: bool = True) -> None:
+    def border_visible(self, arg: bool = True):
         self._border_visible = arg
         ac.drawBorder(self._object_id, 1 if arg else 0)
 
@@ -120,7 +119,7 @@ class _GenericElement:
         """
         return self.background_texture
 
-    def set_background_texture_path(self, path: str) -> None:
+    def set_background_texture_path(self, path: str):
         """
         Set the background texture path of the element. Path starts from the assettocorsa root folder.
         """
@@ -136,7 +135,7 @@ class _GenericElement:
         return self._font_alignment
     
     @font_alignment.setter
-    def font_alignment(self, alignment: FontAlignment) -> None:
+    def font_alignment(self, alignment: FontAlignment):
         if not isinstance(alignment, FontAlignment):
             raise ValueError("Alignment must be an instance of FontAlignment enum.")
         self._font_alignment = alignment
@@ -150,7 +149,7 @@ class _GenericElement:
         return self._visible
 
     @visible.setter
-    def visible(self, arg: bool = True) -> None:
+    def visible(self, arg: bool = True):
         """
         Set the visibility of the element.
         """
@@ -165,7 +164,7 @@ class _GenericElement:
         return self._font_color
     
     @font_color.setter
-    def font_color(self, color: Color) -> None:
+    def font_color(self, color: Color):
         if not isinstance(color, Color):
             raise ValueError("Color must be an instance of Color class.")
         self._font_color = color
@@ -187,7 +186,7 @@ class _GenericElement:
         if not callable(func):
             raise ValueError("Render function must be a callable function.")
         self._render_function = func
-        ac.setRenderFunction(self._object_id, func)
+        ac.addRenderCallback(self._object_id, func)
 
     @property
     def font_size(self) -> float:
@@ -197,7 +196,7 @@ class _GenericElement:
         return self._font_size
     
     @font_size.setter
-    def font_size(self, size: float) -> None:
+    def font_size(self, size: float):
         if not isinstance(size, (int, float)):
             raise ValueError("Font size must be a number.")
         if size < 0:
@@ -213,7 +212,7 @@ class _GenericElement:
         return self._font
     
     @font.setter
-    def font(self, font: Font) -> None:
+    def font(self, font: Font):
         if not isinstance(font, Font):
             raise ValueError("Font must be an instance of Font class.")
         self._font = font
@@ -411,9 +410,62 @@ class Serie:
             ac.addValueToGraph(self._graph._object_id, self._index, data_point)
 
 
+class Checkbox(_GenericElement):
+    def __init__(self, app: 'AppWindow',
+        name: str = "Checkbox",
+        size = (25, 25),
+        position = (50, 50),
+        background_opacity: float = 1.0,
+        background_visible: bool = True,
+        border_visible: bool = True,
+        background_texture: str = None,
+        font_alignment: FontAlignment = FontAlignment.CENTER,
+        font_color: Color = Color(255, 255, 255, 1),
+        visible: bool = True,
+        font_size: int = 12,
+        font = Font(),
+        on_change = None
+    ):
+        object_id = ac.addCheckBox(app._object_id, name)
+        super().__init__(object_id,
+            text = "",
+            size = size,
+            position = position,
+            background_opacity = background_opacity,
+            background_visible = background_visible,
+            border_visible = border_visible,
+            background_texture = background_texture,
+            font_alignment = font_alignment,
+            font_color = font_color,
+            visible = visible,
+            font_size = font_size,
+            font = font
+        )
+        self.on_change = on_change
+
+    @property
+    def on_change(self):
+        """
+        The function that is called when the checkbox is changed.
+        The first argument of the function must be the name of the checkbox, 
+        and the second one is wether it is selected of not.
+        """
+        return self._on_change
+    
+    @on_change.setter
+    def on_change(self, func):
+        if func is None:
+            self._on_change = None
+            return
+        if not callable(func):
+            raise ValueError("Change function must be a callable function.")
+        self._on_change = func
+        ac.addOnCheckBoxChanged(self._object_id, func)
+
+
 class AppWindow(_GenericElement):
     def __init__(self,
-        text: str = "App",
+        title: str = "App",
         size = (100, 100),
         position = (0, 0),
         background_opacity: float = 0.5,
@@ -426,10 +478,11 @@ class AppWindow(_GenericElement):
         font_size: int = 12,
         font = Font()
     ):
-        object_id = ac.newApp(text)
+        object_id = ac.newApp(title)
+        log(object_id)
         super().__init__(
             object_id,
-            text,
+            "",
             size,
             position,
             background_opacity,
@@ -442,31 +495,44 @@ class AppWindow(_GenericElement):
             font_size,
             font
         )
+        self.title = title
 
+
+    @property
+    def title(self) -> str:
+        """
+        The title of the app.
+        """
+        return self._title
     
-    def set_title(self, title: str) -> None:
-        """
-        Set the title of the app.
-        """
+    @title.setter
+    def title(self, title: str) -> None:
+        self._title = title
         ac.setTitle(self._object_id, title)
 
-    def add_label(self, label: str) -> int:
+    @property
+    def title_position(self):
+        """
+        The position of the title. (tuple[float, float])
+        """
+        self._title_position
+    
+    @title_position.setter
+    def title_position(self, position) -> None:
+        self._title_position = position
+        ac.setTitlePosition(self._object_id, *position)
+
+    def add_label(self, label: str):
         """
         Add a label to the app.
         """
-        return ac.addLabel(self._object_id, label)
+        ac.addLabel(self._object_id, label)
     
     def set_icon_position(self, x: float, y: float) -> None:
         """
         Set the position of the icon.
         """
         ac.setIconPosition(self._object_id, x, y)
-
-    def set_title_position(self, x: float, y: float) -> None:
-        """
-        Set the position of the title.
-        """
-        ac.setTitlePosition(self._object_id, x, y)
 
     def add_on_activated_callback(self, callback) -> None:
         """

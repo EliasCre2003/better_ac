@@ -1,9 +1,33 @@
 import ac
 
+_logging_enabled = True
+_console_enabled = True
+
+def do_logging(enable: bool) -> None:
+    """
+    Enable or disable logging.
+    
+    :param enable: If True, logging is enabled. If False, logging is disabled.
+    """
+    global _logging_enabled
+    _logging_enabled = enable
+
+def do_console(enable: bool) -> None:
+    """
+    Enable or disable console output.
+    
+    :param enable: If True, console output is enabled. If False, console output is disabled.
+    """
+    global _console_enabled
+    _console_enabled = enable
+
+
 def log(message) -> None:
     """
-    Print a message to the log file.
+    Print a message to the log file, if it is not turned off.
     """
+    global _logging_enabled
+    if not _logging_enabled: return
     if isinstance(message, str):
         ac.log(message)
     else:
@@ -11,8 +35,10 @@ def log(message) -> None:
 
 def console(message) -> None:
     """
-    Print a message to the console.
+    Print a message to the console, if it is not turned off.
     """
+    global _console_enabled
+    if not _console_enabled: return
     if isinstance(message, str):
         ac.console(message)
     else:

@@ -4,7 +4,6 @@ import acsys
 from .vectors import Vector2D
 from .better_ac import log
 
-
 GL_LINES = 0
 GL_LINES_STRIP = 1
 GL_TRIANGLES = 2
@@ -31,13 +30,13 @@ class Color:
         self.alpha = alpha
 
     
-    def ac_rgb(self):
+    def ac_rgb(self) -> 'tuple[float, float, float]':
         """
         Converts the RGB parts of the color to the format used by the AC.
         """
         return self.red / 255, self.green / 255, self.blue / 255
     
-    def ac_rgba(self):
+    def ac_rgba(self) -> 'tuple[float, float, float, float]':
         """
         Converts the RGBA parts of the color to the format used by the AC.
         """
@@ -159,13 +158,13 @@ class Triangle(Drawable):
 
 class Shape(Drawable):
     """A base class for shapes that can be drawn."""
-    def __init__(self, vertices, triangles):
+    def __init__(self, vertices: 'list[Vertex]', triangles: 'list[Triangle]'):
         self.vertices = vertices
         self.triangles = triangles
 
     # DOESN'T REALLY WORK YET
     @staticmethod
-    def polygon(points, color: Color) -> 'Shape':
+    def polygon(points: 'list[Vector2D]', color: Color) -> 'Shape':
         """
         Create a shape from a list of vertices by converting them into triangles.
         
