@@ -19,142 +19,206 @@ class _GenericElement:
         font_color: Color,
         visible: bool,
         font_size: int,
-        font: Font
+        font: Font,
+        render_function = None
     ):
-        self.object_id = object_id
+        self._object_id = object_id
         self.text = text
-        self.set_size(*size)
-        self.set_position(*position)
-        self.set_background_opacity(background_opacity)
-        self.set_background_visible(background_visible)
-        self.set_border_visible(border_visible)
+        self.size = size
+        self.position = position
+        self.background_opacity = background_opacity
+        self.background_visible = background_visible
+        self.border_visible = border_visible
+        # self.set_background_opacity(background_opacity)
         if background_texture is None:
             background_texture = None
         else:
-            self.set_background_texture(background_texture)
-        self.set_font_alignment(font_alignment)
-        self.set_font_color(font_color)
-        self.set_visible(visible)
-        self.set_font_size(font_size)
-        self.set_font(font)
+            self.set_background_texture_path(background_texture)
+        self.font_alignment = font_alignment
+        self.font_color = font_color
+        self.visible = visible
+        self.font_size = font_size
+        self.font = font
+        self.on_render = render_function
 
     
-    def set_size(self, width: float, height: float) -> None:
+    @property
+    def size(self):
         """
-        Set the size of the element.
+        The size of the element. (tuple[float, float])
         """
-        self.size = width, height
-        ac.setSize(self.object_id, width, height)
+        return self._size
 
-    def get_size(self):
-        """
-        Get the size of the element. (tuple[float, float])
-        """
-        return self.size
+    @size.setter
+    def size(self, size) -> None:
+        self._size = size
+        ac.setSize(self._object_id, *size)
 
-    def set_position(self, x: float, y: float) -> None:
+    @property
+    def position(self):
         """
-        Set the position of the element.
+        The position of the element. (tuple[float, float])
         """
-        self.position = x, y
-        ac.setPosition(self.object_id, x, y)
-
-    def get_position(self):
-        """
-        Get the position of the element. (tuple[float, float])
-        """
-        return ac.getPosition(self.object_id)
+        return ac.getPosition(self._object_id)
     
-    def get_text(self) -> str:
-        """
-        Get the text of the element.
-        """
-        return ac.getText(self.object_id)
-    
-    def set_text(self, text: str) -> None:
-        """
-        Set the text of the element.
-        """
-        self.text = text
-        ac.setText(self.object_id, text)
+    @position.setter
+    def position(self, position) -> None:
+        ac.setPosition(self._object_id, *position)
 
-    def set_background_opacity(self, opacity: float) -> None:
+    @property
+    def text(self):
         """
-        Set the background opacity of the element. Opacity must be between 0 and 1.
+        The text of the element.
         """
+        return ac.getText(self._object_id)
+
+    @text.setter    
+    def text(self, text: str) -> None:
+        ac.setText(self._object_id, text)
+
+    @property
+    def background_opacity(self) -> float:
+        """
+        The background opacity of the element.
+        """
+        return self._background_opacity
+
+    @background_opacity.setter
+    def background_opacity(self, opacity: float) -> None:
         if not (0 <= opacity <= 1):
             raise ValueError("Opacity must be between 0 and 1.")
-        self.background_opacity = opacity
-        ac.setBackgroundOpacity(self.object_id, opacity)
+        self._background_opacity = opacity
+        ac.setBackgroundOpacity(self._object_id, opacity)
     
-    def set_background_visible(self, arg: bool = True) -> None:
+    @property
+    def background_visible(self) -> bool:
         """
-        Draw the background of the element.
+        The visibility of the background of the element.
         """
-        self.background_visible = arg
-        ac.drawBackground(self.object_id, 1 if arg else 0)
+        return self._background_visible
 
-    def set_border_visible(self, arg: bool = True) -> None:
-        """
-        Draw the border of the element.
-        """
-        self.border_visible = arg
-        ac.drawBorder(self.object_id, 1 if arg else 0)
+    @background_visible.setter
+    def background_visible(self, arg: bool = True) -> None:
+        self._background_visible = arg
+        ac.drawBackground(self._object_id, 1 if arg else 0)
 
-    def set_background_texture(self, path: str) -> None:
+    @property
+    def border_visible(self) -> bool:
         """
-        Set the background texture of the element. Path starts from the assettocorsa root folder.
+        The visibility of the border of the element.
+        """
+        return self._border_visible
+    
+    @border_visible.setter
+    def border_visible(self, arg: bool = True) -> None:
+        self._border_visible = arg
+        ac.drawBorder(self._object_id, 1 if arg else 0)
+
+    def get_background_texture_path(self) -> str:
+        """
+        Get the background texture path of the element.
+        """
+        return self.background_texture
+
+    def set_background_texture_path(self, path: str) -> None:
+        """
+        Set the background texture path of the element. Path starts from the assettocorsa root folder.
         """
         self.background_texture = path
         if path is not None:
-            ac.setBackgroundTexture(self.object_id, path)
+            ac.setBackgroundTexture(self._object_id, path)
 
-    def set_font_alignment(self, alignment: FontAlignment) -> None:
+    @property
+    def font_alignment(self) -> FontAlignment:
         """
-        Set the font alignment of the element.
+        The font alignment of the element.
         """
-        # ac.console(alignment.name.lower())
-        self.font_alignment = alignment
-        ac.setFontAlignment(self.object_id, alignment.name)
+        return self._font_alignment
+    
+    @font_alignment.setter
+    def font_alignment(self, alignment: FontAlignment) -> None:
+        if not isinstance(alignment, FontAlignment):
+            raise ValueError("Alignment must be an instance of FontAlignment enum.")
+        self._font_alignment = alignment
+        ac.setFontAlignment(self._object_id, alignment.name)
 
+    @property
+    def visible(self) -> bool:
+        """
+        The visibility of the element.
+        """
+        return self._visible
 
-    def set_visible(self, arg: bool = True) -> None:
+    @visible.setter
+    def visible(self, arg: bool = True) -> None:
         """
         Set the visibility of the element.
         """
-        self.visible = arg
-        ac.setVisible(self.object_id, 1 if arg else 0)
+        self._visible = arg
+        ac.setVisible(self._object_id, 1 if arg else 0)
 
-    def set_font_color(self, color: Color) -> None:
+    @property
+    def font_color(self) -> Color:
         """
-        Set the font color of the element.
+        The font color of the element.
         """
-        self.font_color = color
-        log(ac.setFontColor(self.object_id, *color.ac_rgba()))
+        return self._font_color
+    
+    @font_color.setter
+    def font_color(self, color: Color) -> None:
+        if not isinstance(color, Color):
+            raise ValueError("Color must be an instance of Color class.")
+        self._font_color = color
+        ac.setFontColor(self._object_id, *color.ac_rgba())
 
-    def add_render_callback(self, callback) -> None:
+    @property
+    def on_render(self):
         """
-        Add a callback to the element when it is rendered.
-        The first argument of the callback must be the delta time.
+        The render function of the element.
+        The first argument of the function must be the delta time.
         """
-        if not callable(callback):
-            raise ValueError("Callback must be a callable function.")
-        ac.addRenderCallback(self.object_id, callback)
+        return self._render_function
+    
+    @on_render.setter
+    def on_render(self, func) -> None:
+        if func is None:
+            self._render_function = None
+            return
+        if not callable(func):
+            raise ValueError("Render function must be a callable function.")
+        self._render_function = func
+        ac.setRenderFunction(self._object_id, func)
 
-    def set_font_size(self, size: int) -> None:
+    @property
+    def font_size(self) -> float:
         """
-        Set the font size of the element.
+        The font size of the element.
         """
-        self.font_size = size
-        ac.setFontSize(self.object_id, size)
+        return self._font_size
+    
+    @font_size.setter
+    def font_size(self, size: float) -> None:
+        if not isinstance(size, (int, float)):
+            raise ValueError("Font size must be a number.")
+        if size < 0:
+            raise ValueError("Font size can't be less than 0.")
+        self._font_size = size
+        ac.setFontSize(self._object_id, size)
 
-    def set_font(self, font: Font) -> None:
+    @property
+    def font(self) -> Font:
         """
-        Set the font of the element.
+        The font of the element.
         """
-        self.font = font
+        return self._font
+    
+    @font.setter
+    def font(self, font: Font) -> None:
+        if not isinstance(font, Font):
+            raise ValueError("Font must be an instance of Font class.")
+        self._font = font
         if font.initialized:
-            ac.setCustomFont(0, self.object_id, font.name, 1 if font.italic else 0, 1 if font.bold else 0)
+            ac.setCustomFont(0, self._object_id, font.name, 1 if font.italic else 0, 1 if font.bold else 0)
 
 
 class Button(_GenericElement):
@@ -172,8 +236,9 @@ class Button(_GenericElement):
         visible: bool = True,
         font_size: int = 12,
         font = Font(),
+        on_click = None
     ):
-        object_id = ac.addButton(app.object_id, text)
+        object_id = ac.addButton(app._object_id, text)
         super().__init__(object_id,
             text = text,
             size = size,
@@ -188,21 +253,42 @@ class Button(_GenericElement):
             font_size = font_size,
             font = font
         )
-        self.set_background_color(background_color)
+        self._background_color = background_color
+        self.on_click = on_click
 
-    def set_background_color(self, color: Color) -> None:
+    @property
+    def background_color(self) -> Color:
         """
-        Set the background color of the element.
+        The background color of the button.
         """
-        self.background_color = color
-        ac.setBackgroundColor(self.object_id, *color.ac_rgb())
+        return self._background_color
+    
+    @background_color.setter
+    def background_color(self, color: Color) -> None:
+        """
+        Set the background color of the button.
+        """
+        if not isinstance(color, Color):
+            raise ValueError("Color must be an instance of Color class.")
+        self._background_color = color
+        ac.setBackgroundColor(self._object_id, *color.ac_rgb())
 
-
-    def add_on_click_callback(self, callback) -> None:
+    @property
+    def on_click(self):
         """
-        Add a callback to the button when it is clicked.
+        The function that is called when the button is clicked.
         """
-        ac.addOnButtonClickListener(self.object_id, callback)
+        return self._on_click
+    
+    @on_click.setter
+    def on_click(self, func) -> None:
+        if func is None:
+            self._on_click = None
+            return
+        if not callable(func):
+            raise ValueError("Click function must be a callable function.")
+        self._on_click = func
+        ac.setClickFunction(self._object_id, func)
 
     
 class Graph(_GenericElement):
@@ -224,9 +310,7 @@ class Graph(_GenericElement):
         font_size: int = 12,
         font = Font()
     ):
-        log("Creating graph with text: {}".format(text))
-        object_id = ac.addGraph(app.object_id, text)
-        log(object_id)
+        object_id = ac.addGraph(app._object_id, text)
         super().__init__(
             object_id,
             text,
@@ -242,22 +326,32 @@ class Graph(_GenericElement):
             font_size,
             font
         )
-        self.minimum_value = minimum_value
-        self.maximum_value = maximum_value
-        self.maximum_points = maximum_points
-        log(ac.setRange(self.object_id, minimum_value, maximum_value, maximum_points-1))
-        log(ac.setRange(self.object_id, minimum_value, maximum_value, maximum_points))
+        self._minimum_value = minimum_value
+        self._maximum_value = maximum_value
+        self._maximum_points = maximum_points
+        ac.setRange(self._object_id, minimum_value, maximum_value, maximum_points)
         self._next_serie_index = 0
+
+    @property
+    def minimum_value(self) -> float:
+        """
+        The minimum value of the graph. (read-only)
+        """
+        return self._minimum_value
     
-    # def add_serie(self, serie: Serie):
-    #     """
-    #     Add a new series to the graph.
-    #     """
-    #     index = len(self.series)
-    #     serie = Serie(self.object_id, index, color)
-    #     self.series.append(serie)
-    #     ac.addGraphSerie(self.object_id, index, *color.ac_rgb())
-    #     return serie
+    @property
+    def maximum_value(self) -> float:
+        """
+        The maximum value of the graph. (read-only)
+        """
+        return self._maximum_value
+    
+    @property
+    def maximum_points(self) -> int:
+        """
+        The maximum number of points in the graph. (read-only)
+        """
+        return self._maximum_points
 
 
 class Serie:
@@ -270,7 +364,33 @@ class Serie:
         graph._next_serie_index += 1
         self._color = color
         self._data = []
-        ac.addSerieToGraph(graph.object_id, *color.ac_rgb())
+        ac.addSerieToGraph(graph._object_id, *color.ac_rgb())
+
+    @property
+    def graph(self) -> Graph:
+        """
+        The graph to which this series belongs. (read-only)
+        """
+        return self._graph
+    
+    @property
+    def color(self) -> Color:
+        """
+        The color of the series. (read-only)
+        """
+        return self._color
+    
+    def __getitem__(self, index: int) -> float:
+        """
+        Get a data point by index.
+        """
+        return self._data[index]
+    
+    def __len__(self) -> int:
+        """
+        Get the number of data points in the series.
+        """
+        return len(self._data)
         
     def add_data_point(self, data_point: float):
         """
@@ -279,7 +399,7 @@ class Serie:
         self._data.append(data_point)
         if len(self._data) > self._graph.maximum_points:
             self._data.pop(0)
-        ac.addValueToGraph(self._graph.object_id, self._index, data_point)
+        ac.addValueToGraph(self._graph._object_id, self._index, data_point)
 
     def add_multiple_data_points(self, data_points):
         """
@@ -288,7 +408,7 @@ class Serie:
         self._data.extend(data_points)
         data_points = data_points[-self._graph.maximum_points:]
         for data_point in data_points:
-            ac.addValueToGraph(self._graph.object_id, self._index, data_point)
+            ac.addValueToGraph(self._graph._object_id, self._index, data_point)
 
 
 class AppWindow(_GenericElement):
@@ -328,35 +448,35 @@ class AppWindow(_GenericElement):
         """
         Set the title of the app.
         """
-        ac.setTitle(self.object_id, title)
+        ac.setTitle(self._object_id, title)
 
     def add_label(self, label: str) -> int:
         """
         Add a label to the app.
         """
-        return ac.addLabel(self.object_id, label)
+        return ac.addLabel(self._object_id, label)
     
     def set_icon_position(self, x: float, y: float) -> None:
         """
         Set the position of the icon.
         """
-        ac.setIconPosition(self.object_id, x, y)
+        ac.setIconPosition(self._object_id, x, y)
 
     def set_title_position(self, x: float, y: float) -> None:
         """
         Set the position of the title.
         """
-        ac.setTitlePosition(self.object_id, x, y)
+        ac.setTitlePosition(self._object_id, x, y)
 
     def add_on_activated_callback(self, callback) -> None:
         """
         Add a callback to the app when it is activated.
         """
-        ac.addOnAppActivatedListener(self.object_id, callback)
+        ac.addOnAppActivatedListener(self._object_id, callback)
 
     def add_on_dismissed_callback(self, callback) -> None:
         """
         Add a callback to the app when it is dismissed.
         """
-        ac.addOnAppDismissedListener(self.object_id, callback)
+        ac.addOnAppDismissedListener(self._object_id, callback)
     

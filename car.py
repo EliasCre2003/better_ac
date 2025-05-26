@@ -7,7 +7,17 @@ from .exceptions import raise_car_state_error
 from .better_ac import log
 
 class Car:
+    """
+    A class representing a car. It is used to access various properties of the car.
+    All fields are read-only
+    """
+
     def __init__(self, car_id: int = 0):
+        """
+        Initialize the Car object with a car ID.
+        
+        :param car_id: The ID of the car, default is 0 (the player's car).
+        """
         self.car_id = car_id
         self.fr = Tyre(TyreIdentifier.FL, car_id)
         self.fl = Tyre(TyreIdentifier.FR, car_id)
