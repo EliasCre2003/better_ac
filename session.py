@@ -83,5 +83,7 @@ def current_flag() -> Flag:
     """
     Get the type of the flag that is curently being shown on the track.
     """
-    return Flag(info.physics.flag)
-
+    try:
+        return Flag(info.physics.flag)
+    except ValueError:
+        return None
