@@ -401,7 +401,7 @@ class Button(_GenericElement):
         if not callable(func):
             raise ValueError("Click function must be a callable function.")
         self._on_click = func
-        ac.setClickFunction(self._object_id, func)
+        ac.addOnClickedListener(self._object_id, func)
 
     
 class Graph(_GenericElement):
