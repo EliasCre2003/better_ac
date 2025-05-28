@@ -25,27 +25,33 @@ def do_console(enable: bool) -> None:
     _console_enabled = enable
 
 
-def log(message) -> None:
+def log(*args) -> None:
     """
     Print a message to the log file, if it is not turned off.
     """
     global _logging_enabled
     if not _logging_enabled: return
-    if isinstance(message, str):
-        ac.log(message)
-    else:
-        ac.log(str(message))
+    string = ""
+    for message in args:
+        if isinstance(message, str):
+            string += message + " "
+        else:
+            string += str(message) + " "
+    ac.log(string.strip())
 
-def console(message) -> None:
+def console(*args) -> None:
     """
     Print a message to the console, if it is not turned off.
     """
     global _console_enabled
     if not _console_enabled: return
-    if isinstance(message, str):
-        ac.console(message)
-    else:
-        ac.console(str(message))
+    string = ""
+    for message in args:
+        if isinstance(message, str):
+            string += message + " "
+        else:
+            string += str(message) + " "
+    ac.console(string.strip())
 
 
 

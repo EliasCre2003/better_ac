@@ -2,7 +2,6 @@ import ac
 import acsys
 
 from .graphics import Color
-from .memory import *
 from .font import FontAlignment, Font
 from . import *
 
@@ -12,7 +11,6 @@ class _GenericElement:
         size,
         position,
         background_opacity: float,
-        background_visible: bool,
         border_visible: bool,
         background_texture: str,
         font_alignment: FontAlignment,
@@ -27,11 +25,8 @@ class _GenericElement:
         self.size = size
         self.position = position
         self.background_opacity = background_opacity
-        self.background_visible = background_visible
         self.border_visible = border_visible
-        if background_texture is None:
-            background_texture = None
-        else:
+        if background_texture is not None:
             self.set_background_texture_path(background_texture)
         self.font_alignment = font_alignment
         self.font_color = font_color
@@ -88,18 +83,6 @@ class _GenericElement:
             raise ValueError("Opacity must be between 0 and 1.")
         self._background_opacity = opacity
         ac.setBackgroundOpacity(self._object_id, opacity)
-    
-    @property
-    def background_visible(self) -> bool:
-        """
-        The visibility of the background of the element.
-        """
-        return self._background_visible
-
-    @background_visible.setter
-    def background_visible(self, arg: bool = True) -> None:
-        self._background_visible = arg
-        ac.drawBackground(self._object_id, 1 if arg else 0)
 
     @property
     def border_visible(self) -> bool:
@@ -244,7 +227,6 @@ class AppWindow(_GenericElement):
             size,
             position,
             background_opacity,
-            background_visible,
             border_visible,
             background_texture,
             font_alignment,
@@ -255,6 +237,7 @@ class AppWindow(_GenericElement):
         )
         self.title = title
         self.title_position = title_position
+        self.background_visible = background_visible
 
 
     @property
@@ -333,6 +316,18 @@ class AppWindow(_GenericElement):
         self._on_activated = func
         ac.addOnAppActivatedListener(self._object_id, func)
 
+    @property
+    def background_visible(self) -> bool:
+        """
+        The visibility of the background of the app.
+        """
+        return self._background_visible
+
+    @background_visible.setter
+    def background_visible(self, arg: bool = True) -> None:
+        self._background_visible = arg
+        ac.drawBackground(self._object_id, 1 if arg else 0)
+
 
 class Button(_GenericElement):
     def __init__(self, app: AppWindow,
@@ -340,7 +335,6 @@ class Button(_GenericElement):
         size = (50, 50),
         position = (0, 0),
         background_opacity: float = 1.0,
-        background_visible: bool = True,
         border_visible: bool = True,
         background_texture: str = None,
         font_alignment: FontAlignment = FontAlignment.CENTER,
@@ -357,7 +351,6 @@ class Button(_GenericElement):
             size = size,
             position = position,
             background_opacity = background_opacity,
-            background_visible = background_visible,
             border_visible = border_visible,
             background_texture = background_texture,
             font_alignment = font_alignment,
@@ -413,7 +406,6 @@ class Graph(_GenericElement):
         size = (0, 0),
         position = (0, 0),
         background_opacity: float = 1.0,
-        background_visible: bool = True,
         border_visible: bool = True,
         background_texture: str = None,
         font_alignment: FontAlignment = FontAlignment.CENTER,
@@ -429,7 +421,6 @@ class Graph(_GenericElement):
             size,
             position,
             background_opacity,
-            background_visible,
             border_visible,
             background_texture,
             font_alignment,
@@ -521,7 +512,6 @@ class Checkbox(_GenericElement):
         size = (25, 25),
         position = (50, 50),
         background_opacity: float = 1.0,
-        background_visible: bool = True,
         border_visible: bool = True,
         background_texture: str = None,
         font_alignment: FontAlignment = FontAlignment.CENTER,
@@ -537,7 +527,6 @@ class Checkbox(_GenericElement):
             size = size,
             position = position,
             background_opacity = background_opacity,
-            background_visible = background_visible,
             border_visible = border_visible,
             background_texture = background_texture,
             font_alignment = font_alignment,
@@ -567,7 +556,7 @@ class Checkbox(_GenericElement):
         self._on_change = func
         ac.addOnCheckBoxChanged(self._object_id, func)
 
-# _range = range
+
 class Spinner(_GenericElement):
     def __init__(self, app: AppWindow,
         name: str = "Spinner",
@@ -577,7 +566,6 @@ class Spinner(_GenericElement):
         size = (100, 25),
         position = (50, 50),
         background_opacity: float = 1.0,
-        background_visible: bool = True,
         border_visible: bool = True,
         background_texture: str = None,
         font_alignment: FontAlignment = FontAlignment.CENTER,
@@ -593,7 +581,6 @@ class Spinner(_GenericElement):
             size = size,
             position = position,
             background_opacity = background_opacity,
-            background_visible = background_visible,
             border_visible = border_visible,
             background_texture = background_texture,
             font_alignment = font_alignment,
@@ -671,3 +658,105 @@ class Spinner(_GenericElement):
             raise ValueError("Change function must be a callable function.")
         self._on_change = func
         ac.addOnSpinnerChanged(self._object_id, func)
+
+
+class ProgressBar(_GenericElement):
+    def __init__(self, app: AppWindow,
+        name: str = "ProgressBar",
+        value: float = 0.0,
+        range: 'tuple[float, float]' = (0.0, 1.0),
+        size = (100, 25),
+        position = (50, 50),
+        background_opacity: float = 1.0,
+        border_visible: bool = True,
+        background_texture: str = None,
+        font_alignment: FontAlignment = FontAlignment.CENTER,
+        font_color: Color = Color(255, 255, 255, 1),
+        visible: bool = True,
+        font_size: int = 12,
+        font = Font()
+    ):
+        
+        object_id = ac.addProgressBar(app._object_id, name)
+        super().__init__(object_id,
+            text = "",
+            size = size,
+            position = position,
+            background_opacity = background_opacity,
+            border_visible = border_visible,
+            background_texture = background_texture,
+            font_alignment = font_alignment,
+            font_color = font_color,
+            visible = visible,
+            font_size = font_size,
+            font = font,
+        )
+        self.range = range
+        self.value = value
+        log("Här")
+
+    
+    @property
+    def range(self) -> 'tuple[float, float]':
+        """
+        The range of the progress bar.
+        """
+        return self._range
+    
+    @range.setter
+    def range(self, range: 'tuple[float, float]') -> None:
+        if not isinstance(range, (tuple, list)) or len(range) != 2:
+            raise ValueError("Range must be a tuple of two floats.")
+        self._range = range
+        ac.setRange(self._object_id, range[0], range[1])
+
+    @property
+    def value(self) -> float:
+        """
+        The current value of the progress bar.
+        The value must be within the range of the progress bar.
+        """
+        return ac.getValue(self._object_id)
+    
+    @value.setter
+    def value(self, value: float):
+        ac.setValue(self._object_id, value)
+
+
+class TextInput(_GenericElement):
+    def __init__(self, app: AppWindow,
+        name: str = "TextInput",
+        text: str = "",
+        size = (100, 25),
+        position = (50, 50),
+        background_opacity: float = 1.0,
+        border_visible: bool = True,
+        background_texture: str = None,
+        font_alignment: FontAlignment = FontAlignment.CENTER,
+        font_color: Color = Color(255, 255, 255, 1),
+        visible: bool = True,
+        font_size: int = 12,
+        font = Font(),
+        on_change = None
+    ):
+        object_id = ac.addTextInput(app._object_id, name)
+        super().__init__(object_id,
+            text = text,
+            size = size,
+            position = position,
+            background_opacity = background_opacity,
+            border_visible = border_visible,
+            background_texture = background_texture,
+            font_alignment = font_alignment,
+            font_color = font_color,
+            visible = visible,
+            font_size = font_size,
+            font = font
+        )
+        self.on_change = on_change
+
+    def set_focused(self, arg: bool = True):
+        """
+        he text input is focused or not.
+        """
+        return ac.getFocused(self._object_id)

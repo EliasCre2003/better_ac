@@ -243,10 +243,6 @@ ac.freeCameraRotateRoll
 ac.freeCameraSetClearColor
 ac.getCameraCarCount
 ac.getCameraMode
-ac.getCarEngineBrakeCount
-ac.getCarName
-ac.getCarPowerControllerCount
-ac.getCarRestrictor
 ac.getFocusedCar
 ac.getItemCount
 ac.getSelectedItems
@@ -261,7 +257,6 @@ ac.glQuadTextured
 ac.highlightListBoxItem
 ac.isAcLive
 ac.isCameraOnBoard
-ac.isCarInPitline
 ac.removeItem
 ac.restart
 ac.sendChatMessage

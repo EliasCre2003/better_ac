@@ -14,6 +14,13 @@ def car_state(*args):
 ###############################################
 ################Car Portion####################
 ###############################################
+
+# Does not work:
+#   acsys.CS.TyreVelocity
+#   acsys.CS.TyreSurfaceDef
+#   acsys.CS.TyreRightVector
+
+
 class Car:
     """
     A class representing a car. It is used to access various properties of the car.
@@ -42,9 +49,11 @@ class Car:
                     log("{name}: {value}".format(name=name, value=value))
             except Exception as e:
                 log("FAIL {}: {}".format(name, e))
-
     @staticmethod
     def do_test():
+        """
+        A test to to see if all of the properties work.
+        """
         Car._test(Car(0))
 
     @property
@@ -601,6 +610,29 @@ class Car:
         """
         return ac.getCarTyreCompound(self._car_id)
     
+    @property
+    def restrictor(self) -> float:
+        """
+        The restrictor of the car in percentage.
+        """
+        return ac.getCarRestrictor(self._car_id)
+    
+    @property
+    def num_engine_brake_settings(self) -> int:
+        """
+        The number of engine brake settings available for the car.
+        """
+        return ac.getCarEngineBrakeCount(self._car_id)
+    
+    @property
+    def num_ers_power_controller_settings(self) -> int:
+        """
+        The number of ERS power controller settings available for the car.
+        """
+        return ac.getCarPowerControllerCount(self._car_id)
+    
+
+    
     
 class PlayerCar(Car):
     """
@@ -714,13 +746,6 @@ class PlayerCar(Car):
         The maximum KERS energy of the car in Joule.
         """
         return info.static.kersMaxJ 
-    
-    @property
-    def num_ers_power_controller_settings(self) -> int:
-        """
-        The number of ERS power controller settings available for the car.
-        """
-        return info.static.ersPowerControllerCount
     
     # @property
     # def drs_enabled(self) -> bool:
@@ -849,13 +874,6 @@ class PlayerCar(Car):
     #     :param value: The force feedback value to set.
     #     """
     #     ac.setCarFFB(value)
-    
-    @property
-    def num_engine_brake_settings(self) -> int:
-        """
-        The number of engine brake settings available for the car.
-        """
-        return info.static.engineBrakeSettingsCount
 
 
 ###############################################
