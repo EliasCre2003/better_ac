@@ -33,8 +33,7 @@ class Car:
         self.rr = Tyre(acsys.WHEELS.RR, car_id)
 
     @staticmethod
-    def do_test():
-        instance = __class__.__init__(0)
+    def _test(instance):
         for name in dir(__class__):
             try:
                 attr = getattr(__class__, name)
@@ -43,6 +42,10 @@ class Car:
                     log("{name}: {value}".format(name=name, value=value))
             except Exception as e:
                 log("FAIL {}: {}".format(name, e))
+
+    @staticmethod
+    def do_test():
+        Car._test(Car(0))
 
     @property
     @raise_car_state_error
@@ -465,6 +468,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.P2PStatus)
     
     @property
+    @raise_car_state_error
     def p2p_remaining(self) -> bool:
         """
         How many P2P (Push to Pass) activations are remaining.
@@ -614,6 +618,10 @@ class PlayerCar(Car):
         self.fr = PlayerTyre(acsys.WHEELS.FR)
         self.rl = PlayerTyre(acsys.WHEELS.RL)
         self.rr = PlayerTyre(acsys.WHEELS.RR)
+
+    @staticmethod
+    def do_test():
+        PlayerCar._test(PlayerCar())
 
 
     @property
@@ -1017,6 +1025,23 @@ class Tyre:
         The toe angle of the tyre in degrees.
         """
         return ac.getCarState(self._car_id, acsys.CS.ToeInDeg, self.identifier)
+    
+    @property
+    @raise_car_state_error
+    def last_tyres_temperature(self) -> 'tuple[float, float, float]':
+        """
+        I think this is supposed to do the same as tyre_temperature in the PlayerTyre class,
+        but from testing I can't get any sensible values from it. So use at own risk I guess.
+        """
+        return tuple(ac.getCarState(self._car_id, acsys.CS.LastTyresTemp, self.identifier))
+    
+    @property
+    @raise_car_state_error
+    def slip_angle_contact_patch(self) -> float:
+        """
+        The slip angle of the tyre at the contact patch.
+        """
+        return ac.getCarState(self._car_id, acsys.CS.SlipAngleContactPatch)[self.identifier]
     
 
 class PlayerTyre(Tyre):
