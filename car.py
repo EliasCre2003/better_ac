@@ -6,7 +6,7 @@ from .exceptions import ACCarStateError, raise_car_state_error
 from .better_ac import log
 from .sim_info import info
 
-@raise_car_state_error
+#@raise_car_state_error
 def car_state(*args):
     return ac.getCarState(*args)
 
@@ -57,7 +57,7 @@ class Car:
         Car._test(Car(0))
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def speed_ms(self) -> float:
         """
         The speed of the car in meters per second.
@@ -65,7 +65,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.SpeedMS)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def speed_mph(self) -> float:
         """
         Tthe speed of the car in miles per hour.
@@ -73,7 +73,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.SpeedMPH)
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def speed_kmh(self) -> float:
         """
         The speed of the car in kilometers per hour.
@@ -81,7 +81,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.SpeedKMH)
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def throttle(self) -> float:
         """
         The gas pedal position.
@@ -89,7 +89,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.Gas)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def brake(self) -> float:
         """
         The brake pedal position.
@@ -97,7 +97,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.Brake)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def clutch(self) -> float:
         """
         The clutch pedal position.
@@ -105,7 +105,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.Clutch)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def gear(self) -> int:
         """
         The current gear of the car.
@@ -113,7 +113,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.Gear)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def best_lap(self) -> float:
         """
         The best lap time of the car in milliseconds.
@@ -121,7 +121,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.BestLap)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def cg_height(self) -> float:
         """
         The height of the center of gravity of the car from the ground.
@@ -129,7 +129,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.CGHeight)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def best_drift_lap(self) -> float:
         """
         The best lap points in drift mode.
@@ -137,7 +137,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.DriftBestLap)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def last_drift_lap(self) -> float:
         """
         The last lap points in drift mode.
@@ -145,7 +145,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.DriftLastLap)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def drift_points(self) -> float:
         """
         The drift points of the car.
@@ -153,7 +153,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.DriftPoints)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def drive_train_speed(self) -> float:
         """
         The speed of the drive train (speed delivered to the wheels).
@@ -161,7 +161,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.DriveTrainSpeed)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def rpm(self) -> float:
         """
         The current RPM of the car.
@@ -169,7 +169,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.RPM)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def drift_points(self) -> float:
         """
         The drift points of the car.
@@ -177,7 +177,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.InstantDrift)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def is_drift_invalid(self) -> bool:
         """
         Check if the drift is invalid.
@@ -185,7 +185,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.IsDriftInvalid) == 1
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def is_engine_limiter_on(self) -> bool:
         """
         Check if the engine limiter is on.
@@ -193,7 +193,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.IsEngineLimiterOn) == 1
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def lap_count(self) -> int:
         """
         The lap count of the car.
@@ -201,7 +201,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.LapCount)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def is_lap_invalidated(self) -> bool:
         """
         Check if the lap is invalidated.
@@ -209,7 +209,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.LapInvalidated) == 1
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def lap_time(self) -> float:
         """
         The lap time of the car in milliseconds.
@@ -217,7 +217,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.LapTime)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def last_lap_time(self) -> float:
         """
         The last lap time of the car in milliseconds.
@@ -225,7 +225,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.LastLap)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def normalized_spline_position(self) -> float:
         """
         The normalized position of the car on the track.
@@ -233,7 +233,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.NormalizedSplinePosition)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def performance_meter(self) -> float:
         """
         Projection of how many seconds is the current time far from
@@ -242,7 +242,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.PerformanceMeter)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def steer_rotation(self) -> float:
         """
         The radians of steer rotation.
@@ -250,7 +250,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.Steer)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def turbo_boost(self) -> float:
         """
         The turbo gain on engine torque of the car.
@@ -258,7 +258,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.TurboBoost)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def caster_angle(self) -> float:
         """
         The caster angle of the car in radians.
@@ -266,7 +266,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.Caster)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def gravity_acceleration(self) -> Vector3D:
         """
         The gravity acceleration on the vehicles center of gravity.
@@ -274,7 +274,7 @@ class Car:
         return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.AccG))
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def local_angular_velocity(self) -> Vector3D:
         """
         The angular velocity of the car, using the car as origin.
@@ -282,7 +282,7 @@ class Car:
         return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.LocalAngularVelocity))
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def local_velocity(self) -> Vector3D:
         """
         The velocity using the car as origin.
@@ -290,7 +290,7 @@ class Car:
         return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.LocalVelocity))
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def speed_total(self) -> 'tuple[float, float, float]':
         """
         The speed in all three units: km/h, mph, m/s.
@@ -298,7 +298,7 @@ class Car:
         return tuple(ac.getCarState(self._car_id, acsys.CS.SpeedTotal))
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def velocity(self) -> Vector3D:
         """
         The velocity of the car.
@@ -306,7 +306,7 @@ class Car:
         return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.Velocity))
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def wheel_angular_speed(self) -> Vector3D:
         """
         The wheel angular velocity of the car.
@@ -314,7 +314,7 @@ class Car:
         return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.WheelAngularSpeed))
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def world_position(self) -> Vector3D:
         """
         Current Car Coordinates on map.
@@ -322,7 +322,7 @@ class Car:
         return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.WorldPosition))
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def drs_available(self) -> bool:
         """
         Check if the DRS (Drag Reduction System) is available, 
@@ -331,7 +331,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.DrsAvailable) == 1
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def drs_enabled(self) -> bool:
         """
         Check if the DRS (Drag Reduction System) is enabled.
@@ -339,7 +339,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.DrsEnabled) == 1
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def spent_energy(self) -> float:
         """
         The spent energy of the car in Joule.
@@ -347,7 +347,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.ERSCurrentKJ) * 1000.0
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def ers_heat_charging_mode(self) -> int:
         """
         The ERS heat mode of the car.
@@ -356,7 +356,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.ERSHeatCharging)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def max_ers_energy(self) -> float:
         """
         The maximum ERS energy of the car in Joule.
@@ -364,7 +364,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.ERSMaxJ)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def ers_recovery_level(self) -> int:
         """
         The ERS recovery level of the car
@@ -372,7 +372,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.ERSRecovery)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def engine_brake_setting(self) -> int:
         """
         The current engine brake setting of the car.
@@ -380,7 +380,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.EngineBrake)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def battery_charge(self) -> float:
         """
         The KERS/ERS charge to the battery of the car. 0.0 to 1.0
@@ -388,7 +388,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.KersCharge)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def engine_input(self) -> float:
         """
         The KERS/ERS input to the engine of the car. 0.0 to 1.0
@@ -396,7 +396,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.KersInput)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def last_ffb(self) -> float:
         """
         The last force feedback value.
@@ -404,7 +404,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.LastFF)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def finished_race(self) -> bool:
         """
         Check if the car has finished the race.
@@ -412,7 +412,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.RaceFinished) == 1
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def front_ride_height(self) -> float:
         """
         The front ride height of the car in meters.
@@ -420,7 +420,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.RideHeight)[0]
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def rear_ride_height(self) -> float:
         """
         The rear ride height of the car in meters.
@@ -428,7 +428,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.RideHeight)[1]
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def turbo_boost(self) -> float:
         """
         The turbo boost of the car.
@@ -436,7 +436,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.TurboBoost)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def drag_coefficient(self):
         """
         The drag coefficient of the car.
@@ -444,7 +444,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.Aero, 0)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def front_lift_coefficient(self):
         """
         The front lift coefficient of the car.
@@ -452,7 +452,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.Aero, 1)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def rear_lift_coefficient(self):
         """
         The rear lift coefficient of the car.
@@ -460,7 +460,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.Aero, 2)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def ers_delivery_mode(self) -> int:
         """
         The index of the ERS delivery mode.
@@ -468,7 +468,7 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.ERSDelivery)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def p2p_status(self) -> int:
         """
         The status index of the P2P (Push to Pass) system.
@@ -477,12 +477,20 @@ class Car:
         return ac.getCarState(self._car_id, acsys.CS.P2PStatus)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def p2p_remaining(self) -> bool:
         """
         How many P2P (Push to Pass) activations are remaining.
         """
         return ac.getCarState(self._car_id, acsys.CS.P2PActivations)
+    
+    @property
+    def tyre_temperature(self) -> 'tuple[float, float, float, float]':
+        """
+        The tyre temperature of the car in degrees Celsius.
+        Returns a tuple of four values: front left, front right, rear left, rear right.
+        """
+        return tuple(ac.getCarState(self._car_id, acsys.CS.TyreTemp))
 
     @property
     def driver_name(self) -> str:
@@ -886,7 +894,7 @@ class Tyre:
         self._car_id = car_id
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def camber_radians(self) -> float:
         """
         The camber angle of the tyre in radians.
@@ -894,7 +902,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.CamberRad)[self.identifier]
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def camber_degrees(self) -> float:
         """
         The camber angle of the tyre in degrees.
@@ -909,7 +917,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.SlipAngle)[self.identifier]
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def slip_ratio(self) -> float:
         """
         The slip ratio of the tyre.
@@ -917,7 +925,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.SlipRatio)[self.identifier]
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def self_aligning_torque(self) -> float:
         """
         The self-aligning torque of the tyre.
@@ -925,7 +933,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.Mz)[self.identifier]
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def load(self) -> float:
         """
         The load on the tyre in Newtons.
@@ -933,7 +941,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.Load)[self.identifier]
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def radius(self) -> float:
         """
         The radius of the tyre in meters.
@@ -941,7 +949,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.TyreRadius)[self.identifier]
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def nd_slip(self) -> float:
         """
         How far the tyre is from optimal slip angle.
@@ -949,7 +957,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.NdSlip)[self.identifier]
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def tyre_slip(self) -> float:
         """
         The tyre slip.
@@ -957,7 +965,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.TyreSlip)[self.identifier]
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def dy(self) -> float:
         """
         I honeslty don't know what this is.
@@ -965,7 +973,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.DY)[self.identifier]
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def core_temperature(self) -> float:
         """
         The core temperature of the tyre in degrees Celsius.
@@ -973,7 +981,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.CurrentTyresCoreTemp)[self.identifier]
 
     # @property
-    # @raise_car_state_error
+    # #@raise_car_state_error
     # def thermal_state(self) -> float:
     #     """
     #     The temperature of the tyre.
@@ -981,7 +989,7 @@ class Tyre:
     #     return ac.getCarState(self.car_id, acsys.CS.ThermalState)[self.identifier]
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def dynamic_pressure(self) -> float:
         """
         The dynamic pressure of the tyre in PSI.
@@ -989,7 +997,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.DynamicPressure)[self.identifier]
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def loaded_radius(self) -> float:
         """
         The loaded radius of the tyre in meters.
@@ -997,7 +1005,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.TyreLoadedRadius)[self.identifier]
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def suspension_travel(self) -> float:
         """
         The suspension travel of the tyre in meters.
@@ -1005,7 +1013,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.SuspensionTravel)[self.identifier]
 
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def dirt_level(self) -> float:
         """
         The dirt level of the tyre.
@@ -1013,7 +1021,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.TyreDirtyLevel)[self.identifier]
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def tyre_contact_point(self) -> Vector3D:
         """
         The tyre contact point of the tyre.
@@ -1021,7 +1029,7 @@ class Tyre:
         return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.TyreContactPoint, self.identifier))
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def tyre_contact_normal(self) -> Vector3D:
         """
         The tyre contact normal of the tyre.
@@ -1029,7 +1037,7 @@ class Tyre:
         return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.TyreContactNormal, self.identifier))
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def tyre_contact_heading(self) -> Vector3D:
         """
         The tyre contact heading of the tyre.
@@ -1037,7 +1045,7 @@ class Tyre:
         return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.TyreHeadingVector, self.identifier))
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def toe(self) -> float:
         """
         The toe angle of the tyre in degrees.
@@ -1045,7 +1053,7 @@ class Tyre:
         return ac.getCarState(self._car_id, acsys.CS.ToeInDeg, self.identifier)
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def last_tyres_temperature(self) -> 'tuple[float, float, float]':
         """
         I think this is supposed to do the same as tyre_temperature in the PlayerTyre class,
@@ -1054,7 +1062,7 @@ class Tyre:
         return tuple(ac.getCarState(self._car_id, acsys.CS.LastTyresTemp, self.identifier))
     
     @property
-    @raise_car_state_error
+    #@raise_car_state_error
     def slip_angle_contact_patch(self) -> float:
         """
         The slip angle of the tyre at the contact patch.
