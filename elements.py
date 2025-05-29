@@ -169,7 +169,6 @@ class _GenericElement:
         if not callable(func):
             raise ValueError("Render function must be a callable function.")
         self._render_function = func
-        log("Funkar")
         log(ac.addRenderCallback(self._object_id, func))
 
     @property

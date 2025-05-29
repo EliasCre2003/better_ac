@@ -34,10 +34,6 @@ class Car:
         :param car_id: The ID of the car, 0 would refer to the player car.
         """
         self._car_id = car_id
-        self.fl = Tyre(acsys.WHEELS.FL, car_id)
-        self.fr = Tyre(acsys.WHEELS.FR, car_id)
-        self.rl = Tyre(acsys.WHEELS.RL, car_id)
-        self.rr = Tyre(acsys.WHEELS.RR, car_id)
 
     @staticmethod
     def _test(instance):
@@ -49,12 +45,47 @@ class Car:
                     log("{name}: {value}".format(name=name, value=value))
             except Exception as e:
                 log("FAIL {}: {}".format(name, e))
+    
     @staticmethod
     def do_test():
         """
         A test to to see if all of the properties work.
         """
         Car._test(Car(0))
+
+    @property
+    def fl(self) -> 'Tyre':
+        """
+        The front left tyre of the car.
+        """
+        return Tyre(acsys.WHEELS.FL, self._car_id)
+    
+    @property
+    def fr(self) -> 'Tyre':
+        """
+        The front right tyre of the car.
+        """
+        return Tyre(acsys.WHEELS.FR, self._car_id)
+    
+    @property
+    def rl(self) -> 'Tyre':
+        """
+        The rear left tyre of the car.
+        """
+        return Tyre(acsys.WHEELS.RL, self._car_id)
+    
+    @property
+    def rr(self) -> 'Tyre':
+        """
+        The rear right tyre of the car.
+        """
+        return Tyre(acsys.WHEELS.RR, self._car_id)
+    
+    def get_all_tyres(self) -> 'tuple[Tyre, Tyre, Tyre, Tyre]':
+        """
+        Get all tyres of the car.  
+        """
+        return (self.fl, self.fr, self.rl, self.rr)
 
     @property
     #@raise_car_state_error
@@ -483,14 +514,6 @@ class Car:
         How many P2P (Push to Pass) activations are remaining.
         """
         return ac.getCarState(self._car_id, acsys.CS.P2PActivations)
-    
-    @property
-    def tyre_temperature(self) -> 'tuple[float, float, float, float]':
-        """
-        The tyre temperature of the car in degrees Celsius.
-        Returns a tuple of four values: front left, front right, rear left, rear right.
-        """
-        return tuple(ac.getCarState(self._car_id, acsys.CS.TyreTemp))
 
     @property
     def driver_name(self) -> str:
@@ -646,7 +669,8 @@ class PlayerCar(Car):
     """
     A class representing the player's car. It inherits from the Car class.
     The player car is always the car with ID 0. It provides access to more 
-    specific properties using the shared memory interface of Assetto Corsa.
+    specific properties using the shared memory interface of Assetto Corsa,
+    and generally functions that only apply to the player car.
     """
 
     def __init__(self):
@@ -654,10 +678,7 @@ class PlayerCar(Car):
         Initialize the PlayerCar object with car ID 0.
         """
         super().__init__(car_id=0)
-        self.fl = PlayerTyre(acsys.WHEELS.FL)
-        self.fr = PlayerTyre(acsys.WHEELS.FR)
-        self.rl = PlayerTyre(acsys.WHEELS.RL)
-        self.rr = PlayerTyre(acsys.WHEELS.RR)
+
 
     @staticmethod
     def do_test():
@@ -890,7 +911,7 @@ class PlayerCar(Car):
 
 class Tyre:
     def __init__(self, identifier, car_id: int):
-        self.identifier = identifier
+        self._identifier = identifier
         self._car_id = car_id
 
     @property
@@ -899,7 +920,7 @@ class Tyre:
         """
         The camber angle of the tyre in radians.
         """
-        return ac.getCarState(self._car_id, acsys.CS.CamberRad)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.CamberRad)[self._identifier]
 
     @property
     #@raise_car_state_error
@@ -907,14 +928,14 @@ class Tyre:
         """
         The camber angle of the tyre in degrees.
         """
-        return ac.getCarState(self._car_id, acsys.CS.CamberDeg)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.CamberDeg)[self._identifier]
     
     @property
     def slip_angle(self) -> float:
         """
         The slip angle of the tyre in degrees.
         """
-        return ac.getCarState(self._car_id, acsys.CS.SlipAngle)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.SlipAngle)[self._identifier]
 
     @property
     #@raise_car_state_error
@@ -922,7 +943,7 @@ class Tyre:
         """
         The slip ratio of the tyre.
         """
-        return ac.getCarState(self._car_id, acsys.CS.SlipRatio)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.SlipRatio)[self._identifier]
 
     @property
     #@raise_car_state_error
@@ -930,7 +951,7 @@ class Tyre:
         """
         The self-aligning torque of the tyre.
         """
-        return ac.getCarState(self._car_id, acsys.CS.Mz)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.Mz)[self._identifier]
 
     @property
     #@raise_car_state_error
@@ -938,7 +959,7 @@ class Tyre:
         """
         The load on the tyre in Newtons.
         """
-        return ac.getCarState(self._car_id, acsys.CS.Load)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.Load)[self._identifier]
 
     @property
     #@raise_car_state_error
@@ -946,7 +967,7 @@ class Tyre:
         """
         The radius of the tyre in meters.
         """
-        return ac.getCarState(self._car_id, acsys.CS.TyreRadius)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.TyreRadius)[self._identifier]
 
     @property
     #@raise_car_state_error
@@ -954,7 +975,7 @@ class Tyre:
         """
         How far the tyre is from optimal slip angle.
         """
-        return ac.getCarState(self._car_id, acsys.CS.NdSlip)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.NdSlip)[self._identifier]
 
     @property
     #@raise_car_state_error
@@ -962,7 +983,7 @@ class Tyre:
         """
         The tyre slip.
         """
-        return ac.getCarState(self._car_id, acsys.CS.TyreSlip)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.TyreSlip)[self._identifier]
 
     @property
     #@raise_car_state_error
@@ -970,7 +991,14 @@ class Tyre:
         """
         I honeslty don't know what this is.
         """
-        return ac.getCarState(self._car_id, acsys.CS.DY)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.DY)[self._identifier]
+    
+    @property
+    def temperature(self) -> float:
+        """
+        The temperature of the tyre.
+        """
+        return ac.getCarState(self._car_id, acsys.CS.TyreTemp, self._identifier)
 
     @property
     #@raise_car_state_error
@@ -978,7 +1006,7 @@ class Tyre:
         """
         The core temperature of the tyre in degrees Celsius.
         """
-        return ac.getCarState(self._car_id, acsys.CS.CurrentTyresCoreTemp)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.CurrentTyresCoreTemp)[self._identifier]
 
     # @property
     # #@raise_car_state_error
@@ -994,7 +1022,7 @@ class Tyre:
         """
         The dynamic pressure of the tyre in PSI.
         """
-        return ac.getCarState(self._car_id, acsys.CS.DynamicPressure)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.DynamicPressure)[self._identifier]
 
     @property
     #@raise_car_state_error
@@ -1002,7 +1030,7 @@ class Tyre:
         """
         The loaded radius of the tyre in meters.
         """
-        return ac.getCarState(self._car_id, acsys.CS.TyreLoadedRadius)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.TyreLoadedRadius)[self._identifier]
 
     @property
     #@raise_car_state_error
@@ -1010,7 +1038,7 @@ class Tyre:
         """
         The suspension travel of the tyre in meters.
         """
-        return ac.getCarState(self._car_id, acsys.CS.SuspensionTravel)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.SuspensionTravel)[self._identifier]
 
     @property
     #@raise_car_state_error
@@ -1018,7 +1046,7 @@ class Tyre:
         """
         The dirt level of the tyre.
         """
-        return ac.getCarState(self._car_id, acsys.CS.TyreDirtyLevel)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.TyreDirtyLevel)[self._identifier]
     
     @property
     #@raise_car_state_error
@@ -1026,7 +1054,7 @@ class Tyre:
         """
         The tyre contact point of the tyre.
         """
-        return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.TyreContactPoint, self.identifier))
+        return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.TyreContactPoint, self._identifier))
     
     @property
     #@raise_car_state_error
@@ -1034,7 +1062,7 @@ class Tyre:
         """
         The tyre contact normal of the tyre.
         """
-        return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.TyreContactNormal, self.identifier))
+        return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.TyreContactNormal, self._identifier))
     
     @property
     #@raise_car_state_error
@@ -1042,7 +1070,7 @@ class Tyre:
         """
         The tyre contact heading of the tyre.
         """
-        return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.TyreHeadingVector, self.identifier))
+        return Vector3D(structure=ac.getCarState(self._car_id, acsys.CS.TyreHeadingVector, self._identifier))
     
     @property
     #@raise_car_state_error
@@ -1050,7 +1078,7 @@ class Tyre:
         """
         The toe angle of the tyre in degrees.
         """
-        return ac.getCarState(self._car_id, acsys.CS.ToeInDeg, self.identifier)
+        return ac.getCarState(self._car_id, acsys.CS.ToeInDeg, self._identifier)
     
     @property
     #@raise_car_state_error
@@ -1059,7 +1087,7 @@ class Tyre:
         I think this is supposed to do the same as tyre_temperature in the PlayerTyre class,
         but from testing I can't get any sensible values from it. So use at own risk I guess.
         """
-        return tuple(ac.getCarState(self._car_id, acsys.CS.LastTyresTemp, self.identifier))
+        return tuple(ac.getCarState(self._car_id, acsys.CS.LastTyresTemp, self._identifier))
     
     @property
     #@raise_car_state_error
@@ -1067,47 +1095,54 @@ class Tyre:
         """
         The slip angle of the tyre at the contact patch.
         """
-        return ac.getCarState(self._car_id, acsys.CS.SlipAngleContactPatch)[self.identifier]
+        return ac.getCarState(self._car_id, acsys.CS.SlipAngleContactPatch)[self._identifier]
     
-
-class PlayerTyre(Tyre):
-    """
-    Tyre class for the player car. Inherits from Tyre.
-    Provides further methods specific to the player car.
-    """
-    def __init__(self, identifier: int):
-        super().__init__(identifier, 0)
-
     @property
     def tyre_wear(self) -> float:
         """
-        The tyre wear of the tyre.
+        The wear of the tyre.
         """
-        return info.physics.tyreWear[self.identifier]
-    
-    @property
-    def max_suspension_travel(self) -> float:
-        """
-        The maximum suspension travel of the tyre.
-        """
-        return info.static.suspensionMaxTravel[self.identifier]
+        return ac.ext_getTyreWear(self._car_id, self._identifier)
     
     @property
     def brake_temperature(self) -> float:
         """
         The brake temperature of the tyre in degrees Celsius.
         """
-        return info.physics.brakeTemp[self.identifier]
+        return ac.ext_getBrakeTemp(self._car_id, self._identifier)
     
     @property
-    def tyre_temperature(self) -> 'tuple[float, float, float]':
+    def surface_tyre_temperatures(self) -> 'tuple[float, float, float]':
         """
-        The tyre temperature of the tyre in degrees Celsius.
+        The surface tyre temperature of the tyre in degrees Celsius.
         Returns a tuple with the inner, middle and outer temperatures.
         """
         return (
-            info.physics.tyreTempI[self.identifier],
-            info.physics.tyreTempM[self.identifier],
-            info.physics.tyreTempO[self.identifier]
+            ac.ext_getTyreTempI(self._car_id, self._identifier),
+            ac.ext_getTyreTempM(self._car_id, self._identifier),
+            ac.ext_getTyreTempO(self._car_id, self._identifier)
         )
     
+    
+
+# class PlayerTyre(Tyre):
+#     """
+#     Tyre class for the player car. Inherits from Tyre.
+#     Provides further methods specific to the player car.
+#     """
+#     def __init__(self, identifier: int):
+#         super().__init__(identifier, 0)
+
+#     # @property
+#     # def tyre_wear(self) -> float:
+#     #     """
+#     #     The tyre wear of the tyre.
+#     #     """
+#     #     return info.physics.tyreWear[self.identifier]
+    
+#     @property
+#     def max_suspension_travel(self) -> float:
+#         """
+#         The maximum suspension travel of the tyre.
+#         """
+#         return info.static.suspensionMaxTravel[self._identifier]
